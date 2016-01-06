@@ -3,6 +3,7 @@ package com.adkdevelopment.simpleflashlightadfree;
 import android.app.Service;
 import android.content.Intent;
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -43,26 +44,42 @@ public class FlashlightService extends Service {
 
         Log.v(LOG_TAG, "started");
 
-        if (camera == null) {
-            camera = Camera.open();
-            parameters = camera.getParameters();
-        }
+
 
         status = (status + 1) % 2;
 
-        switch (status) {
-            case 0:
-                parameters.setFlashMode("torch");
-                camera.setParameters(parameters);
-                camera.startPreview();
-                break;
-            case 1:
-                parameters.setFlashMode("off");
-                camera.setParameters(parameters);
-                camera.stopPreview();
-                break;
-        }
+        FlashlightSwitch flashlightSwitch = new FlashlightSwitch();
+        flashlightSwitch.execute(status);
 
         return 0;
+    }
+
+    public class FlashlightSwitch extends AsyncTask<Integer, Void, Void> {
+
+        public FlashlightSwitch() {}
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+
+            if (camera == null) {
+                camera = Camera.open();
+                parameters = camera.getParameters();
+            }
+
+            switch (status) {
+                case 0:
+                    parameters.setFlashMode("torch");
+                    camera.setParameters(parameters);
+                    camera.startPreview();
+                    break;
+                case 1:
+                    parameters.setFlashMode("off");
+                    camera.setParameters(parameters);
+                    camera.stopPreview();
+                    break;
+            }
+
+            return null;
+        }
     }
 }
