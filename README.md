@@ -8,6 +8,8 @@ Simple Flashlight with no Ads which works as a Service (flashlight works when th
 * Flashing lights
 * Morse Code
 
-
+## Used technologies
+* Service, Intents
+* AsyncTask
 
 
