@@ -12,4 +12,6 @@ Simple Flashlight with no Ads which works as a Service (flashlight works when th
 * Service, Intents
 * AsyncTask
 
-
+## Content from the Internet
+* App Icon - http://graphiccave.com/project/flashlight-icon-vector-and-png-free-download/
+* Power Buttons - http://www.freestockphotos.biz/stockphoto/15104
