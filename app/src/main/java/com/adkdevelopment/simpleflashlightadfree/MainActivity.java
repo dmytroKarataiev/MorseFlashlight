@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private int status = 0;
+    private int status;
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -17,7 +17,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (savedInstanceState != null) {
+            status = savedInstanceState.getInt("status");
+
+            if (status != 0) {
+                Intent intent = new Intent(getApplication(), FlashlightService.class);
+                intent.putExtra("status", status);
+                getApplication().startService(intent);
+            }
+        } else {
+            status = 0;
+        }
+
         final ImageView button = (ImageView) findViewById(R.id.button_image);
+
+        // check status and use correct image
+        if (status == 0) {
+            button.setImageResource(R.drawable.switch_on);
+        } else {
+            button.setImageResource(R.drawable.switch_off);
+        }
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -27,13 +46,12 @@ public class MainActivity extends AppCompatActivity {
 
                 if (status == 0) {
                     status = 1;
-                    intent.putExtra("status", status);
-                    button.setImageResource(R.drawable.switch_on);
+                    button.setImageResource(R.drawable.switch_off);
                 } else {
                     status = 0;
-                    intent.putExtra("status", status);
-                    button.setImageResource(R.drawable.switch_off);
+                    button.setImageResource(R.drawable.switch_on);
                 }
+                intent.putExtra("status", status);
                 getApplication().startService(intent);
             }
         });
@@ -46,5 +64,13 @@ public class MainActivity extends AppCompatActivity {
         // Stop service on application exit
         Intent intent = new Intent(getApplication(), FlashlightService.class);
         getApplication().stopService(intent);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // Save status on rotate, possibly will remove rotation in the future
+        outState.putInt("status", status);
     }
 }
