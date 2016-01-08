@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Simple Flashlight (Ad Free)</string>
     <string name="flashlight_switch">Toggle</string>
-    <string name="flashlight_status">Flashlight</string>
+    <string name="flashlight_status">Switch</string>
 </resources>

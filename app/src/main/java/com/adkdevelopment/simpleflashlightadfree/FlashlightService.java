@@ -42,11 +42,8 @@ public class FlashlightService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
 
-        Log.v(LOG_TAG, "started");
-
-
-
-        status = (status + 1) % 2;
+        status = intent.getIntExtra("status", 1);
+        Log.v(LOG_TAG, "started " + status);
 
         FlashlightSwitch flashlightSwitch = new FlashlightSwitch();
         flashlightSwitch.execute(status);
@@ -67,12 +64,12 @@ public class FlashlightService extends Service {
             }
 
             switch (status) {
-                case 0:
+                case 1:
                     parameters.setFlashMode("torch");
                     camera.setParameters(parameters);
                     camera.startPreview();
                     break;
-                case 1:
+                case 0:
                     parameters.setFlashMode("off");
                     camera.setParameters(parameters);
                     camera.stopPreview();
