@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,27 +31,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         final ImageView button = (ImageView) findViewById(R.id.button_image);
+        final TextView statusText = (TextView) findViewById(R.id.flashlight_mode);
 
         // check status and use correct image
-        if (status == 0) {
-            button.setImageResource(R.drawable.switch_on);
-        } else {
-            button.setImageResource(R.drawable.switch_off);
-        }
+        setSwitchColor(statusText, button, status);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Start service on click
+                status = (status + 1) % 3;
+
                 Intent intent = new Intent(getApplication(), FlashlightService.class);
 
-                if (status == 0) {
-                    status = 1;
-                    button.setImageResource(R.drawable.switch_off);
-                } else {
-                    status = 0;
-                    button.setImageResource(R.drawable.switch_on);
-                }
+                // Set button drawable
+                setSwitchColor(statusText, button, status);
+
                 intent.putExtra("status", status);
                 getApplication().startService(intent);
             }
@@ -72,5 +68,27 @@ public class MainActivity extends AppCompatActivity {
 
         // Save status on rotate, possibly will remove rotation in the future
         outState.putInt("status", status);
+    }
+
+    /**
+     * Method to set flashlight button drawable
+     * @param button to switch flashlight
+     * @param status flashlight mode
+     */
+    private void setSwitchColor(TextView mode, ImageView button, int status) {
+        switch (status) {
+            case 0:
+                button.setImageResource(R.drawable.switch_on);
+                mode.setText(R.string.flashlight_status_on);
+                break;
+            case 1:
+                button.setImageResource(R.drawable.switch_blink);
+                mode.setText(R.string.flashlight_status_blink);
+                break;
+            case 2:
+                button.setImageResource(R.drawable.switch_off);
+                mode.setText(R.string.flashlight_status_off);
+                break;
+        }
     }
 }

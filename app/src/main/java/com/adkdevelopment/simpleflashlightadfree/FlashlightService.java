@@ -19,12 +19,17 @@ public class FlashlightService extends Service {
     private int status = -1;
     private Camera camera;
     private Camera.Parameters parameters;
+    FlashlightSwitch flashlightSwitch;
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
         Log.v(LOG_TAG, "released");
+        // Cancel while loop to start another activity
+        if (flashlightSwitch != null) {
+            flashlightSwitch.cancel(true);
+        }
 
         if (camera != null) {
             camera.release();
@@ -43,9 +48,13 @@ public class FlashlightService extends Service {
         super.onStartCommand(intent, flags, startId);
 
         status = intent.getIntExtra("status", 1);
-        Log.v(LOG_TAG, "started " + status);
 
-        FlashlightSwitch flashlightSwitch = new FlashlightSwitch();
+        // Cancel while loop to start another activity
+        if (flashlightSwitch != null) {
+            flashlightSwitch.cancel(true);
+        }
+
+        flashlightSwitch = new FlashlightSwitch();
         flashlightSwitch.execute(status);
 
         return 0;
@@ -64,19 +73,42 @@ public class FlashlightService extends Service {
             }
 
             switch (status) {
-                case 1:
-                    parameters.setFlashMode("torch");
-                    camera.setParameters(parameters);
-                    camera.startPreview();
-                    break;
                 case 0:
                     parameters.setFlashMode("off");
                     camera.setParameters(parameters);
                     camera.stopPreview();
                     break;
+                case 1:
+                    parameters.setFlashMode("torch");
+                    camera.setParameters(parameters);
+                    camera.startPreview();
+                    break;
+                case 2:
+                    parameters.setFlashMode("torch");
+                    camera.setParameters(parameters);
+                    camera.startPreview();
+
+                    // Blinking will stop on service re-start.
+                    try {
+                        while (true) {
+                            if (camera != null) {
+                                Thread.sleep(100);
+                                parameters.setFlashMode("off");
+                                camera.setParameters(parameters);
+                                Thread.sleep(100);
+                                parameters.setFlashMode("torch");
+                                camera.setParameters(parameters);
+                            }
+                        }
+
+                    } catch (InterruptedException e) {
+                        Log.e(LOG_TAG, "Interrupted " + e);
+                    }
+                    break;
             }
 
             return null;
         }
+
     }
 }
