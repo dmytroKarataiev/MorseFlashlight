@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Простой Фонарик</string>
+    <string name="flashlight_switch">Переключатель</string>
+    <string name="flashlight_status_on">Включить</string>
+    <string name="flashlight_status_off">Выключить</string>
+    <string name="flashlight_status_blink">Моргать</string>
+
+</resources>
