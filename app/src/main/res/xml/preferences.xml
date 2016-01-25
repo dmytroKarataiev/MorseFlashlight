@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <SwitchPreference
+        android:title="@string/pref_orientation"
+        android:key="@string/pref_orientation_key"
+        android:defaultValue="false"
+        android:summaryOn="@string/pref_orientation_portrait"
+        android:summaryOff="@string/pref_orientation_portrait_off"/>
+
+</PreferenceScreen>

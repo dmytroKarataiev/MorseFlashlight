@@ -5,4 +5,11 @@
     <string name="flashlight_status_off">Turn off</string>
     <string name="flashlight_status_blink">Blink Mode</string>
 
+    <!-- Preferences screen -->
+    <string name="preferences">Preferences</string>
+    <string name="pref_orientation">Lock Screen Orientation</string>
+    <string name="pref_orientation_key" translatable="false">orientation</string>
+    <string name="pref_orientation_portrait">Portrait only</string>
+    <string name="pref_orientation_portrait_off">Rotation enabled</string>
+
 </resources>

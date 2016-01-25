@@ -4,5 +4,9 @@
     <string name="flashlight_status_on">Включить</string>
     <string name="flashlight_status_off">Выключить</string>
     <string name="flashlight_status_blink">Моргать</string>
+    <string name="pref_orientation">Отключить ротацию экрана</string>
+    <string name="pref_orientation_portrait">Портретный вид</string>
+    <string name="pref_orientation_portrait_off">Ротация включена</string>
+    <string name="preferences">Настройки</string>
 
 </resources>
