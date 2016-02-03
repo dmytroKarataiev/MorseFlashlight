@@ -68,23 +68,24 @@ public class FlashlightService extends Service {
         protected Void doInBackground(Integer... params) {
 
             if (camera == null) {
-                camera = Camera.open();
+                Log.v(LOG_TAG, "Number of cameras: " + Camera.getNumberOfCameras());
+                camera = Camera.open(0);
                 parameters = camera.getParameters();
             }
 
             switch (status) {
                 case 0:
-                    parameters.setFlashMode("off");
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                     camera.setParameters(parameters);
                     camera.stopPreview();
                     break;
                 case 1:
-                    parameters.setFlashMode("torch");
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                     camera.setParameters(parameters);
                     camera.startPreview();
                     break;
                 case 2:
-                    parameters.setFlashMode("torch");
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                     camera.setParameters(parameters);
                     camera.startPreview();
 
@@ -93,10 +94,10 @@ public class FlashlightService extends Service {
                         while (true) {
                             if (camera != null) {
                                 Thread.sleep(100);
-                                parameters.setFlashMode("off");
+                                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                                 camera.setParameters(parameters);
                                 Thread.sleep(100);
-                                parameters.setFlashMode("torch");
+                                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                                 camera.setParameters(parameters);
                             }
                         }

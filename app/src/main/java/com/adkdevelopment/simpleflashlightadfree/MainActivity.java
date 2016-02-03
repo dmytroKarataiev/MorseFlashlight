@@ -1,8 +1,13 @@
 package com.adkdevelopment.simpleflashlightadfree;
 
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +17,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     private int status;
+    private boolean torch;
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -32,27 +38,58 @@ public class MainActivity extends AppCompatActivity {
             status = 0;
         }
 
-        final ImageView button = (ImageView) findViewById(R.id.button_image);
-        final TextView statusText = (TextView) findViewById(R.id.flashlight_mode);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
-        // check status and use correct image
-        setSwitchColor(statusText, button, status);
+            final CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+            final ImageView button2 = (ImageView) findViewById(R.id.button_image2);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Start service on click
-                status = (status + 1) % 3;
+            button2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (torch) {
+                        try {
+                            manager.setTorchMode("0", false);
+                            torch = false;
+                        } catch (CameraAccessException e) {
+                            Log.e(LOG_TAG, "Error " + e);
+                        }
+                    } else {
+                        try {
+                            manager.setTorchMode("0", true);
+                            torch = true;
+                        } catch (CameraAccessException e) {
+                            Log.e(LOG_TAG, "Error " + e);
+                        }
+                    }
 
-                Intent intent = new Intent(getApplication(), FlashlightService.class);
+                }
+            });
+        } else {
+            final ImageView button = (ImageView) findViewById(R.id.button_image);
+            final TextView statusText = (TextView) findViewById(R.id.flashlight_mode);
 
-                // Set button drawable
-                setSwitchColor(statusText, button, status);
+            // check status and use correct image
+            setSwitchColor(statusText, button, status);
 
-                intent.putExtra("status", status);
-                getApplication().startService(intent);
-            }
-        });
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Start service on click
+                    status = (status + 1) % 3;
+
+                    Intent intent = new Intent(getApplication(), FlashlightService.class);
+
+                    // Set button drawable
+                    setSwitchColor(statusText, button, status);
+
+                    intent.putExtra("status", status);
+                    getApplication().startService(intent);
+                }
+            });
+        }
+
+
+
 
     }
 

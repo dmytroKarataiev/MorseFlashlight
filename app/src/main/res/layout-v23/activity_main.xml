@@ -26,12 +26,13 @@
         android:layout_height="100dp">
 
         <ImageView
-            android:id="@+id/button_image"
+            android:id="@+id/button_image2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/switch_off"
             android:contentDescription="@string/flashlight_switch"/>
 
     </FrameLayout>
+
 
 </LinearLayout>
