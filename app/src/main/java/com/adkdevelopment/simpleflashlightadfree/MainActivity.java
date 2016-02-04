@@ -1,13 +1,8 @@
 package com.adkdevelopment.simpleflashlightadfree;
 
-import android.content.Context;
 import android.content.Intent;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,57 +33,27 @@ public class MainActivity extends AppCompatActivity {
             status = 0;
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        final ImageView button = (ImageView) findViewById(R.id.button_image);
+        final TextView statusText = (TextView) findViewById(R.id.flashlight_mode);
 
-            final CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-            final ImageView button2 = (ImageView) findViewById(R.id.button_image2);
+        // check status and use correct image
+        setSwitchColor(statusText, button, status);
 
-            button2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (torch) {
-                        try {
-                            manager.setTorchMode("0", false);
-                            torch = false;
-                        } catch (CameraAccessException e) {
-                            Log.e(LOG_TAG, "Error " + e);
-                        }
-                    } else {
-                        try {
-                            manager.setTorchMode("0", true);
-                            torch = true;
-                        } catch (CameraAccessException e) {
-                            Log.e(LOG_TAG, "Error " + e);
-                        }
-                    }
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start service on click
+                status = (status + 1) % 3;
 
-                }
-            });
-        } else {
-            final ImageView button = (ImageView) findViewById(R.id.button_image);
-            final TextView statusText = (TextView) findViewById(R.id.flashlight_mode);
+                Intent intent = new Intent(getApplication(), FlashlightService.class);
 
-            // check status and use correct image
-            setSwitchColor(statusText, button, status);
+                // Set button drawable
+                setSwitchColor(statusText, button, status);
 
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Start service on click
-                    status = (status + 1) % 3;
-
-                    Intent intent = new Intent(getApplication(), FlashlightService.class);
-
-                    // Set button drawable
-                    setSwitchColor(statusText, button, status);
-
-                    intent.putExtra("status", status);
-                    getApplication().startService(intent);
-                }
-            });
-        }
-
-
+                intent.putExtra("status", status);
+                getApplication().startService(intent);
+            }
+        });
 
 
     }
@@ -112,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Method to set flashlight button drawable
+     *
      * @param button to switch flashlight
      * @param status flashlight mode
      */

@@ -1,9 +1,13 @@
 package com.adkdevelopment.simpleflashlightadfree;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -62,50 +66,84 @@ public class FlashlightService extends Service {
 
     public class FlashlightSwitch extends AsyncTask<Integer, Void, Void> {
 
-        public FlashlightSwitch() {}
+        public FlashlightSwitch() {
+        }
 
         @Override
         protected Void doInBackground(Integer... params) {
 
-            if (camera == null) {
-                Log.v(LOG_TAG, "Number of cameras: " + Camera.getNumberOfCameras());
-                camera = Camera.open(0);
-                parameters = camera.getParameters();
-            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
 
-            switch (status) {
-                case 0:
-                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                    camera.setParameters(parameters);
-                    camera.stopPreview();
-                    break;
-                case 1:
-                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                    camera.setParameters(parameters);
-                    camera.startPreview();
-                    break;
-                case 2:
-                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                    camera.setParameters(parameters);
-                    camera.startPreview();
+                try {
+                    switch (status) {
+                        case 0:
+                            manager.setTorchMode("0", false);
+                            break;
+                        case 1:
+                            manager.setTorchMode("0", true);
+                            break;
+                        case 2:
+                            manager.setTorchMode("0", true);
 
-                    // Blinking will stop on service re-start.
-                    try {
-                        while (true) {
-                            if (camera != null) {
-                                Thread.sleep(100);
-                                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                                camera.setParameters(parameters);
-                                Thread.sleep(100);
-                                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                                camera.setParameters(parameters);
+                            // Blinking will stop on service re-start.
+                            try {
+                                while (true) {
+                                    Thread.sleep(100);
+                                    manager.setTorchMode("0", true);
+                                    Thread.sleep(100);
+                                    manager.setTorchMode("0", false);
+                                }
+                            } catch (InterruptedException e) {
+                                Log.e(LOG_TAG, "Interrupted " + e);
                             }
-                        }
-
-                    } catch (InterruptedException e) {
-                        Log.e(LOG_TAG, "Interrupted " + e);
+                            break;
                     }
-                    break;
+                } catch (CameraAccessException e) {
+                    Log.e(LOG_TAG, "Error " + e);
+                }
+
+            } else {
+                if (camera == null) {
+                    Log.v(LOG_TAG, "Number of cameras: " + Camera.getNumberOfCameras());
+                    camera = Camera.open(0);
+                    parameters = camera.getParameters();
+                }
+
+                switch (status) {
+                    case 0:
+                        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                        camera.setParameters(parameters);
+                        camera.stopPreview();
+                        break;
+                    case 1:
+                        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                        camera.setParameters(parameters);
+                        camera.startPreview();
+                        break;
+                    case 2:
+                        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                        camera.setParameters(parameters);
+                        camera.startPreview();
+
+                        // Blinking will stop on service re-start.
+                        try {
+                            while (true) {
+                                if (camera != null) {
+                                    Thread.sleep(100);
+                                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                                    camera.setParameters(parameters);
+                                    Thread.sleep(100);
+                                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                                    camera.setParameters(parameters);
+                                }
+                            }
+
+                        } catch (InterruptedException e) {
+                            Log.e(LOG_TAG, "Interrupted " + e);
+                        }
+                        break;
+                }
             }
 
             return null;
