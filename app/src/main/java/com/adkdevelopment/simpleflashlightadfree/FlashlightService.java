@@ -3,8 +3,10 @@ package com.adkdevelopment.simpleflashlightadfree;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -74,25 +76,37 @@ public class FlashlightService extends Service {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+                String flashCameraId = "0";
+                try {
+                    for (String camera : manager.getCameraIdList()) {
+                        if (manager
+                                .getCameraCharacteristics(camera)
+                                .get(CameraCharacteristics.FLASH_INFO_AVAILABLE)) {
+                            flashCameraId = camera;
+                        }
+                    }
+                } catch (CameraAccessException e) {
+                    Log.e(LOG_TAG, "CameraAccessException " + e);
+                }
 
                 try {
                     switch (status) {
                         case 0:
-                            manager.setTorchMode("0", false);
+                            manager.setTorchMode(flashCameraId, false);
                             break;
                         case 1:
-                            manager.setTorchMode("0", true);
+                            manager.setTorchMode(flashCameraId, true);
                             break;
                         case 2:
-                            manager.setTorchMode("0", true);
+                            manager.setTorchMode(flashCameraId, true);
 
                             // Blinking will stop on service re-start.
                             try {
                                 while (true) {
                                     Thread.sleep(100);
-                                    manager.setTorchMode("0", true);
+                                    manager.setTorchMode(flashCameraId, true);
                                     Thread.sleep(100);
-                                    manager.setTorchMode("0", false);
+                                    manager.setTorchMode(flashCameraId, false);
                                 }
                             } catch (InterruptedException e) {
                                 Log.e(LOG_TAG, "Interrupted " + e);
@@ -104,9 +118,9 @@ public class FlashlightService extends Service {
                 }
 
             } else {
-                if (camera == null) {
+                if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH) && camera == null) {
                     Log.v(LOG_TAG, "Number of cameras: " + Camera.getNumberOfCameras());
-                    camera = Camera.open(0);
+                    camera = Camera.open();
                     parameters = camera.getParameters();
                 }
 
