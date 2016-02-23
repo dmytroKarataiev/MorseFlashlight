@@ -12,7 +12,7 @@ import android.widget.TextView;
 /**
  * Created by karataev on 2/22/16.
  */
-public class MainFragment extends android.support.v4.app.Fragment {
+public class MorseFragment extends android.support.v4.app.Fragment {
 
     private int status;
     private boolean torch;
@@ -20,7 +20,7 @@ public class MainFragment extends android.support.v4.app.Fragment {
     public static final String ARG_OBJECT = "object";
 
 
-    public MainFragment() {}
+    public MorseFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,7 +44,7 @@ public class MainFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_morse, container, false);
 
         final ImageView button = (ImageView) rootView.findViewById(R.id.button_image);
         final TextView statusText = (TextView) rootView.findViewById(R.id.flashlight_mode);

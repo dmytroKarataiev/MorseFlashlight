@@ -36,6 +36,7 @@ public class PagerFragment extends Fragment {
                         getChildFragmentManager());
 
         mViewPager.setAdapter(mDemoCollectionPagerAdapter);
+        mViewPager.setCurrentItem(MainActivity.current_fragment);
 
         return rootView;
     }
@@ -48,7 +49,13 @@ public class PagerFragment extends Fragment {
         }
 
         @Override
-        public MainFragment getItem(int i) {
+        public Fragment getItem(int i) {
+
+            if (i == 0) {
+                MorseFragment morseFragment = new MorseFragment();
+                return morseFragment;
+            }
+
             MainFragment fragment = new MainFragment();
             Bundle args = new Bundle();
             // Our object is just an integer :-P
@@ -59,7 +66,7 @@ public class PagerFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return 100;
+            return 3;
         }
 
         @Override

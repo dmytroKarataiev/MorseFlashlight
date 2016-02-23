@@ -9,7 +9,8 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
-
+    public static int current_fragment = 1;
+    PagerFragment pagerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (savedInstanceState == null) {
-            PagerFragment pagerFragment = new PagerFragment();
+            pagerFragment = new PagerFragment();
 
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, pagerFragment)
@@ -57,6 +58,18 @@ public class MainActivity extends AppCompatActivity {
         Utility.setOrientation(this);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt("Pager_Current", pagerFragment.mViewPager.getCurrentItem());
+        getSupportFragmentManager().putFragment(outState, "my_main", pagerFragment);
+        super.onSaveInstanceState(outState);
+    }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        current_fragment = savedInstanceState.getInt("Pager_Current");
+        pagerFragment = (PagerFragment) getSupportFragmentManager().getFragment(savedInstanceState,"my_main");
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 
 }
