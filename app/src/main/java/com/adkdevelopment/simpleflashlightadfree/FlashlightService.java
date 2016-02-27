@@ -23,6 +23,13 @@ public class FlashlightService extends Service {
     private final String LOG_TAG = FlashlightService.class.getSimpleName();
 
     private int status = -1;
+    private String morseCode = "";
+
+    // morse variables
+    private int dot = 150;
+    private int dash = 450;
+    private int space = 1050;
+
     private Camera camera;
     private Camera.Parameters parameters;
     FlashlightSwitch flashlightSwitch;
@@ -55,11 +62,18 @@ public class FlashlightService extends Service {
 
         status = intent.getIntExtra("status", 1);
 
+        //get morse code from intent
+        morseCode = intent.getStringExtra("morse");
+        if (morseCode == null) {
+            morseCode = "";
+        }
+
         // Cancel while loop to start another activity
         if (flashlightSwitch != null) {
             flashlightSwitch.cancel(true);
         }
 
+        Log.v(LOG_TAG, "flash: " + morseCode + " status: " + status);
         flashlightSwitch = new FlashlightSwitch();
         flashlightSwitch.execute(status);
 
@@ -89,6 +103,8 @@ public class FlashlightService extends Service {
                     Log.e(LOG_TAG, "CameraAccessException " + e);
                 }
 
+                Log.v(LOG_TAG, "case 3: " + morseCode + " status: " + status);
+
                 try {
                     switch (status) {
                         case 0:
@@ -107,6 +123,31 @@ public class FlashlightService extends Service {
                                     manager.setTorchMode(flashCameraId, true);
                                     Thread.sleep(100);
                                     manager.setTorchMode(flashCameraId, false);
+                                }
+                            } catch (InterruptedException e) {
+                                Log.e(LOG_TAG, "Interrupted " + e);
+                            }
+                            break;
+                        case 3:
+
+                            try {
+                                while (true) {
+                                    for (int i = 0, n = morseCode.length(); i < n; i++) {
+                                        if (morseCode.charAt(i) == ' ') {
+                                            manager.setTorchMode(flashCameraId, false);
+                                            Thread.sleep(space);
+                                        } else if (isVowel(morseCode.charAt(i))) {
+                                            manager.setTorchMode(flashCameraId, true);
+                                            Thread.sleep(dash);
+                                            manager.setTorchMode(flashCameraId, false);
+                                        } else if (isConsanant(morseCode.charAt(i))) {
+                                            manager.setTorchMode(flashCameraId, true);
+                                            Thread.sleep(dot);
+                                            manager.setTorchMode(flashCameraId, false);
+                                        }
+
+                                        Thread.sleep(space);
+                                    }
                                 }
                             } catch (InterruptedException e) {
                                 Log.e(LOG_TAG, "Interrupted " + e);
@@ -157,11 +198,51 @@ public class FlashlightService extends Service {
                             Log.e(LOG_TAG, "Interrupted " + e);
                         }
                         break;
+                    case 3:
+
+                        try {
+                            while (true) {
+                                for (int i = 0, n = morseCode.length(); i < n; i++) {
+                                    if (camera != null) {
+                                        if (morseCode.charAt(i) == ' ') {
+
+                                            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                                            camera.setParameters(parameters);
+                                            Thread.sleep(space);
+
+                                        } else if (isVowel(morseCode.charAt(i))) {
+                                            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                                            camera.setParameters(parameters);
+                                            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                                            camera.setParameters(parameters);
+                                            Thread.sleep(dash);
+                                        } else if (isConsanant(morseCode.charAt(i))) {
+                                            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                                            camera.setParameters(parameters);
+                                            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                                            camera.setParameters(parameters);
+                                            Thread.sleep(dot);
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (InterruptedException e) {
+                            Log.e(LOG_TAG, "Interrupted " + e);
+                        }
+                        break;
                 }
             }
 
             return null;
         }
 
+    }
+
+    private boolean isVowel(char c) {
+        return "AEIOUaeiou".indexOf(c) != -1;
+    }
+
+    public boolean isConsanant(char c) {
+        return "bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ".indexOf(c) != -1;
     }
 }

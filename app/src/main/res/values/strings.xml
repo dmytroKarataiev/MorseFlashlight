@@ -12,4 +12,6 @@
     <string name="pref_orientation_portrait">Portrait only</string>
     <string name="pref_orientation_portrait_off">Rotation enabled</string>
 
+    <!-- Morse code screen -->
+    <string name="morse_code_textfield">Morse code</string>
 </resources>

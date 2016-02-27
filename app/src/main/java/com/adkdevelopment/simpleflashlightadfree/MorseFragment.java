@@ -3,9 +3,13 @@ package com.adkdevelopment.simpleflashlightadfree;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,7 +19,9 @@ import android.widget.TextView;
 public class MorseFragment extends android.support.v4.app.Fragment {
 
     private int status;
-    private boolean torch;
+    private String morseCode;
+
+    private final String LOG_TAG = MorseFragment.class.getSimpleName();
 
     public static final String ARG_OBJECT = "object";
 
@@ -32,6 +38,10 @@ public class MorseFragment extends android.support.v4.app.Fragment {
             if (status != 0) {
                 Intent intent = new Intent(getActivity().getApplication(), FlashlightService.class);
                 intent.putExtra("status", status);
+
+                // add morse code
+                intent.putExtra("morse", morseCode);
+
                 getActivity().getApplication().startService(intent);
             }
         } else {
@@ -56,7 +66,11 @@ public class MorseFragment extends android.support.v4.app.Fragment {
             @Override
             public void onClick(View v) {
                 // Start service on click
-                status = (status + 1) % 3;
+                if (status == 0) {
+                    status = 3;
+                } else {
+                    status = 0;
+                }
 
                 Intent intent = new Intent(getActivity().getApplication(), FlashlightService.class);
 
@@ -64,12 +78,33 @@ public class MorseFragment extends android.support.v4.app.Fragment {
                 setSwitchColor(statusText, button, status);
 
                 intent.putExtra("status", status);
+
+                // add morse code
+                intent.putExtra("morse", morseCode);
+
                 getActivity().getApplication().startService(intent);
             }
         });
 
-        Bundle args = getArguments();
-//        statusText.setText(Integer.toString(args.getInt(ARG_OBJECT)));
+        final EditText editText = (EditText) rootView.findViewById(R.id.edittext_morse);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.v(LOG_TAG, "text changed");
+                morseCode = s.toString();
+            }
+        });
 
         return rootView;
     }
@@ -103,11 +138,7 @@ public class MorseFragment extends android.support.v4.app.Fragment {
                 button.setImageResource(R.drawable.switch_on);
                 mode.setText(R.string.flashlight_status_on);
                 break;
-            case 1:
-                button.setImageResource(R.drawable.switch_blink);
-                mode.setText(R.string.flashlight_status_blink);
-                break;
-            case 2:
+            case 3:
                 button.setImageResource(R.drawable.switch_off);
                 mode.setText(R.string.flashlight_status_off);
                 break;
