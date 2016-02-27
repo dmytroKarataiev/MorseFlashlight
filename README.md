@@ -3,10 +3,11 @@ Simple Flashlight with no Ads which works as a Service (flashlight works when th
 
 ## Functionality
 * Switch On/Off
+* Morse Code (alpha) added with [(03acde1)](https://github.com/dmytroKarataiev/SimpleFlashlight/commit/03acde1851b01802823e2d7e044bdaf1f1a31297) commit
+* Full Marshmallow support (CameraManager)
 
 ## Future development
-* Flashing lights
-* Morse Code
+* Emergency state
 
 ## Used technologies
 * Service, Intents
