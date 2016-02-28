@@ -8,5 +8,9 @@
     <string name="pref_orientation_portrait">Портретный вид</string>
     <string name="pref_orientation_portrait_off">Ротация включена</string>
     <string name="preferences">Настройки</string>
+    <string name="emergency_screen">Тревожный сигнал</string>
+    <string name="flashlight_screen">Фонарик</string>
+    <string name="morse_code_textfield">Морзе код (англ.)</string>
+    <string name="morse_screen">Морзе Код</string>
 
 </resources>

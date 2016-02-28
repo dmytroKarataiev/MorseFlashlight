@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,7 +100,6 @@ public class MorseFragment extends android.support.v4.app.Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                Log.v(LOG_TAG, "text changed");
                 morseCode = s.toString();
             }
         });

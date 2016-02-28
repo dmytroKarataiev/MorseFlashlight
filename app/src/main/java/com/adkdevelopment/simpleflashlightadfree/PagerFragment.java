@@ -71,7 +71,13 @@ public class PagerFragment extends Fragment {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return "OBJECT " + (position + 1);
+            if (position == 0) {
+                return getActivity().getString(R.string.morse_screen);
+            } else if (position == 1) {
+                return getActivity().getString(R.string.flashlight_screen);
+            } else {
+                return getActivity().getString(R.string.emergency_screen);
+            }
         }
     }
 }

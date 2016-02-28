@@ -14,4 +14,10 @@
 
     <!-- Morse code screen -->
     <string name="morse_code_textfield">Morse code</string>
+
+    <!-- Pager titles -->
+    <string name="morse_screen">Morse code</string>
+    <string name="flashlight_screen">Flashlight</string>
+    <string name="emergency_screen">Emergency signal</string>
+
 </resources>

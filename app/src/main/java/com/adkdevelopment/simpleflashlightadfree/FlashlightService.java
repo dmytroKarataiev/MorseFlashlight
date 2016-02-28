@@ -14,6 +14,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.util.HashMap;
+
 /**
  * Service to keep Flashlight Active when the app is in background
  * Created by karataev on 1/5/16.
@@ -27,8 +29,8 @@ public class FlashlightService extends Service {
 
     // morse variables
     private int dot = 150;
-    private int dash = 450;
-    private int space = 1050;
+    private int dash = 3;
+    private int space = 7;
 
     private Camera camera;
     private Camera.Parameters parameters;
@@ -73,7 +75,6 @@ public class FlashlightService extends Service {
             flashlightSwitch.cancel(true);
         }
 
-        Log.v(LOG_TAG, "flash: " + morseCode + " status: " + status);
         flashlightSwitch = new FlashlightSwitch();
         flashlightSwitch.execute(status);
 
@@ -82,7 +83,49 @@ public class FlashlightService extends Service {
 
     public class FlashlightSwitch extends AsyncTask<Integer, Void, Void> {
 
+        HashMap<String, int[]> morseCodesMap;
+
         public FlashlightSwitch() {
+
+            // Morse HashMap to retrieve sequences in O(1)
+
+            morseCodesMap = new HashMap<>();
+            morseCodesMap.put("A", new int[] {1, 3, 0, 0, 0});
+            morseCodesMap.put("B", new int[] {3, 1, 1, 1, 0});
+            morseCodesMap.put("C", new int[] {3, 1, 3, 1, 0});
+            morseCodesMap.put("D", new int[] {3, 1, 1, 0, 0});
+            morseCodesMap.put("E", new int[] {1, 0, 0, 0, 0});
+            morseCodesMap.put("F", new int[] {1, 1, 3, 1, 0});
+            morseCodesMap.put("G", new int[] {3, 3, 1, 0, 0});
+            morseCodesMap.put("H", new int[] {1, 1, 1, 1, 0});
+            morseCodesMap.put("I", new int[] {1, 1, 0, 0, 0});
+            morseCodesMap.put("J", new int[] {1, 3, 3, 3, 0});
+            morseCodesMap.put("K", new int[] {3, 1, 3, 0, 0});
+            morseCodesMap.put("L", new int[] {1, 3, 1, 1, 0});
+            morseCodesMap.put("M", new int[] {3, 3, 0, 0, 0});
+            morseCodesMap.put("N", new int[] {3, 1, 0, 0, 0});
+            morseCodesMap.put("O", new int[] {3, 3, 3, 0, 0});
+            morseCodesMap.put("P", new int[] {1, 3, 3, 1, 0});
+            morseCodesMap.put("Q", new int[] {3, 3, 1, 3, 0});
+            morseCodesMap.put("R", new int[] {1, 3, 1, 0, 0});
+            morseCodesMap.put("S", new int[] {1, 1, 1, 0, 0});
+            morseCodesMap.put("T", new int[] {3, 0, 0, 0, 0});
+            morseCodesMap.put("U", new int[] {1, 1, 3, 0, 0});
+            morseCodesMap.put("V", new int[] {1, 1, 1, 3, 0});
+            morseCodesMap.put("W", new int[] {1, 3, 3, 0, 0});
+            morseCodesMap.put("X", new int[] {3, 1, 1, 3, 0});
+            morseCodesMap.put("Y", new int[] {3, 1, 3, 3, 0});
+            morseCodesMap.put("Z", new int[] {3, 3, 1, 1, 0});
+            morseCodesMap.put("1", new int[] {1, 3, 3, 3, 3});
+            morseCodesMap.put("2", new int[] {1, 1, 3, 3, 3});
+            morseCodesMap.put("3", new int[] {1, 1, 1, 3, 3});
+            morseCodesMap.put("4", new int[] {1, 1, 1, 1, 3});
+            morseCodesMap.put("5", new int[] {1, 1, 1, 1, 1});
+            morseCodesMap.put("6", new int[] {3, 1, 1, 1, 1});
+            morseCodesMap.put("7", new int[] {3, 3, 1, 1, 1});
+            morseCodesMap.put("8", new int[] {3, 3, 3, 1, 1});
+            morseCodesMap.put("9", new int[] {3, 3, 3, 3, 1});
+            morseCodesMap.put("0", new int[] {3, 3, 3, 3, 3});
         }
 
         @Override
@@ -103,8 +146,6 @@ public class FlashlightService extends Service {
                     Log.e(LOG_TAG, "CameraAccessException " + e);
                 }
 
-                Log.v(LOG_TAG, "case 3: " + morseCode + " status: " + status);
-
                 try {
                     switch (status) {
                         case 0:
@@ -119,9 +160,9 @@ public class FlashlightService extends Service {
                             // Blinking will stop on service re-start.
                             try {
                                 while (true) {
-                                    Thread.sleep(100);
+                                    Thread.sleep(dot);
                                     manager.setTorchMode(flashCameraId, true);
-                                    Thread.sleep(100);
+                                    Thread.sleep(dot);
                                     manager.setTorchMode(flashCameraId, false);
                                 }
                             } catch (InterruptedException e) {
@@ -135,19 +176,22 @@ public class FlashlightService extends Service {
                                     for (int i = 0, n = morseCode.length(); i < n; i++) {
                                         if (morseCode.charAt(i) == ' ') {
                                             manager.setTorchMode(flashCameraId, false);
-                                            Thread.sleep(space);
-                                        } else if (isVowel(morseCode.charAt(i))) {
-                                            manager.setTorchMode(flashCameraId, true);
-                                            Thread.sleep(dash);
-                                            manager.setTorchMode(flashCameraId, false);
-                                        } else if (isConsanant(morseCode.charAt(i))) {
-                                            manager.setTorchMode(flashCameraId, true);
-                                            Thread.sleep(dot);
-                                            manager.setTorchMode(flashCameraId, false);
+                                            Thread.sleep(dot * space);
+                                        } else {
+                                            int[] sequence = getMorseSequence(Character.toString(morseCode.charAt(i)).toUpperCase());
+                                            for (int k = 0; k < 5; k++) {
+                                                if (sequence[k] != 0) {
+                                                    manager.setTorchMode(flashCameraId, true);
+                                                    Thread.sleep(dot * sequence[k]);
+                                                    manager.setTorchMode(flashCameraId, false);
+                                                    Thread.sleep(dot);
+                                                }
+                                            }
                                         }
 
-                                        Thread.sleep(space);
+                                        Thread.sleep(dot * dash);
                                     }
+                                    Thread.sleep(dot * space);
                                 }
                             } catch (InterruptedException e) {
                                 Log.e(LOG_TAG, "Interrupted " + e);
@@ -185,10 +229,10 @@ public class FlashlightService extends Service {
                         try {
                             while (true) {
                                 if (camera != null) {
-                                    Thread.sleep(100);
+                                    Thread.sleep(dot);
                                     parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                                     camera.setParameters(parameters);
-                                    Thread.sleep(100);
+                                    Thread.sleep(dot);
                                     parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                                     camera.setParameters(parameters);
                                 }
@@ -199,32 +243,29 @@ public class FlashlightService extends Service {
                         }
                         break;
                     case 3:
-
                         try {
                             while (true) {
                                 for (int i = 0, n = morseCode.length(); i < n; i++) {
-                                    if (camera != null) {
-                                        if (morseCode.charAt(i) == ' ') {
-
-                                            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                                            camera.setParameters(parameters);
-                                            Thread.sleep(space);
-
-                                        } else if (isVowel(morseCode.charAt(i))) {
-                                            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                                            camera.setParameters(parameters);
-                                            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                                            camera.setParameters(parameters);
-                                            Thread.sleep(dash);
-                                        } else if (isConsanant(morseCode.charAt(i))) {
-                                            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                                            camera.setParameters(parameters);
-                                            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                                            camera.setParameters(parameters);
-                                            Thread.sleep(dot);
+                                    if (morseCode.charAt(i) == ' ') {
+                                        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                                        camera.setParameters(parameters);
+                                        Thread.sleep(dot * space);
+                                    } else {
+                                        int[] sequence = getMorseSequence(Character.toString(morseCode.charAt(i)).toUpperCase());
+                                        for (int k = 0; k < 5; k++) {
+                                            if (sequence[k] != 0) {
+                                                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                                                camera.setParameters(parameters);
+                                                Thread.sleep(dot * sequence[k]);
+                                                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                                                camera.setParameters(parameters);
+                                                Thread.sleep(dot);
+                                            }
                                         }
                                     }
+                                    Thread.sleep(dot * dash);
                                 }
+                                Thread.sleep(dot * space);
                             }
                         } catch (InterruptedException e) {
                             Log.e(LOG_TAG, "Interrupted " + e);
@@ -236,13 +277,25 @@ public class FlashlightService extends Service {
             return null;
         }
 
+        /**
+         * Method to return int[] with sequence of morse code for each latin letter or number
+         * @param character to get the sequence for
+         * @return int array with the sequence
+         */
+        private int[] getMorseSequence(String character) {
+
+            int[] sequence = morseCodesMap.get(character);
+
+            if (sequence == null) {
+                return new int[] {0, 0, 0, 0, 0};
+            } else {
+                return sequence;
+            }
+
+        }
+
+
     }
 
-    private boolean isVowel(char c) {
-        return "AEIOUaeiou".indexOf(c) != -1;
-    }
 
-    public boolean isConsanant(char c) {
-        return "bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ".indexOf(c) != -1;
-    }
 }
