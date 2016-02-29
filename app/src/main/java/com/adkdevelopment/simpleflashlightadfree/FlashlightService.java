@@ -38,6 +38,8 @@ public class FlashlightService extends Service {
     private Camera camera;
     private Camera.Parameters parameters;
     FlashlightSwitch flashlightSwitch;
+    CameraManager manager;
+    String flashCameraId;
 
     @Override
     public void onDestroy() {
@@ -53,6 +55,16 @@ public class FlashlightService extends Service {
             camera.release();
             camera = null;
         }
+
+        if (manager != null) {
+            try {
+                manager.setTorchMode(flashCameraId, false);
+            } catch (CameraAccessException e) {
+                Log.e(LOG_TAG, "Error: " + e);
+            }
+        }
+
+
     }
 
     @Nullable
@@ -136,8 +148,8 @@ public class FlashlightService extends Service {
         protected Void doInBackground(Integer... params) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-                String flashCameraId = "0";
+                manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+                flashCameraId = "0";
                 try {
                     for (String camera : manager.getCameraIdList()) {
                         if (manager

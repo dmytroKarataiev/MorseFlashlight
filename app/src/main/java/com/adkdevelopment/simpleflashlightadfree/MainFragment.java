@@ -14,6 +14,8 @@ import android.widget.TextView;
  */
 public class MainFragment extends android.support.v4.app.Fragment {
 
+    private final String LOG_TAG = MainFragment.class.getSimpleName();
+
     private int status;
     private boolean torch;
 
@@ -68,9 +70,6 @@ public class MainFragment extends android.support.v4.app.Fragment {
             }
         });
 
-        Bundle args = getArguments();
-//        statusText.setText(Integer.toString(args.getInt(ARG_OBJECT)));
-
         return rootView;
     }
 
@@ -78,9 +77,7 @@ public class MainFragment extends android.support.v4.app.Fragment {
     public void onDestroy() {
         super.onDestroy();
 
-        // Stop service on application exit
-        Intent intent = new Intent(getActivity().getApplication(), FlashlightService.class);
-        getActivity().getApplication().stopService(intent);
+
     }
 
     @Override
@@ -113,4 +110,5 @@ public class MainFragment extends android.support.v4.app.Fragment {
                 break;
         }
     }
+
 }

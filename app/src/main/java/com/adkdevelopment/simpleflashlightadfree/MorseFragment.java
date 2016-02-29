@@ -71,17 +71,10 @@ public class MorseFragment extends android.support.v4.app.Fragment {
                     status = 0;
                 }
 
-                Intent intent = new Intent(getActivity().getApplication(), FlashlightService.class);
-
                 // Set button drawable
                 setSwitchColor(statusText, button, status);
 
-                intent.putExtra("status", status);
-
-                // add morse code
-                intent.putExtra("morse", morseCode);
-
-                getActivity().getApplication().startService(intent);
+                startService();
             }
         });
 
@@ -101,6 +94,9 @@ public class MorseFragment extends android.support.v4.app.Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 morseCode = s.toString();
+                if (s.length() > 0) {
+                    startService();
+                }
             }
         });
 
@@ -142,4 +138,16 @@ public class MorseFragment extends android.support.v4.app.Fragment {
                 break;
         }
     }
+
+    private void startService() {
+        Intent intent = new Intent(getActivity().getApplication(), FlashlightService.class);
+
+        intent.putExtra("status", status);
+
+        // add morse code
+        intent.putExtra("morse", morseCode);
+
+        getActivity().getApplication().startService(intent);
+    }
+
 }

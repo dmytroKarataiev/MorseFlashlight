@@ -13,7 +13,7 @@
     <string name="pref_orientation_portrait_off">Rotation enabled</string>
 
     <!-- Morse code screen -->
-    <string name="morse_code_textfield">Morse code</string>
+    <string name="morse_code_textfield">Enter your message: </string>
 
     <!-- Pager titles -->
     <string name="morse_screen">Morse code</string>
