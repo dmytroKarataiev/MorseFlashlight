@@ -12,5 +12,7 @@
     <string name="flashlight_screen">Фонарик</string>
     <string name="morse_code_textfield">Морзе код (англ.)</string>
     <string name="morse_screen">Морзе Код</string>
+    <string name="morse_message_title">Текущее сообщение:</string>
+    <string name="morse_expl">1. Длина точки - 1 юнит. \n2. Тире - 3 юнита. \n3. Пробел между частями одной буквы - 1 юнит. \n4. Пробел между буквами - 3 юнита. \n5. Пробел между словами - 7 юнитов.</string>
 
 </resources>

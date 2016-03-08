@@ -18,7 +18,7 @@ import android.widget.TextView;
 public class MorseFragment extends android.support.v4.app.Fragment {
 
     private int status;
-    private String morseCode;
+    private String morseCode, beforeChangeMorse;
 
     private final String LOG_TAG = MorseFragment.class.getSimpleName();
 
@@ -57,6 +57,7 @@ public class MorseFragment extends android.support.v4.app.Fragment {
 
         final ImageView button = (ImageView) rootView.findViewById(R.id.button_image);
         final TextView statusText = (TextView) rootView.findViewById(R.id.flashlight_mode);
+        final TextView morseMessage = (TextView) rootView.findViewById(R.id.morse_current_text);
 
         // check status and use correct image
         setSwitchColor(statusText, button, status);
@@ -83,7 +84,7 @@ public class MorseFragment extends android.support.v4.app.Fragment {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                beforeChangeMorse = s.toString();
             }
 
             @Override
@@ -94,11 +95,14 @@ public class MorseFragment extends android.support.v4.app.Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 morseCode = s.toString();
-                if (s.length() > 0) {
+                morseMessage.setText(Utility.getMorseMessage(morseCode));
+
+                if (s.length() > 0 || beforeChangeMorse.length() > 0) {
                     startService();
                 }
             }
         });
+
 
         return rootView;
     }

@@ -188,6 +188,7 @@ public class FlashlightService extends Service {
                         case 3:
 
                             try {
+                                manager.setTorchMode(flashCameraId, false);
                                 while (true) {
                                     for (int i = 0, n = morseCode.length(); i < n; i++) {
                                         if (morseCode.charAt(i) == ' ') {
@@ -263,7 +264,11 @@ public class FlashlightService extends Service {
                             }
                             break;
                         case 3:
-                            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                            if (morseCode.length() > 0) {
+                                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                            } else {
+                                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                            }
                             camera.setParameters(parameters);
                             camera.startPreview();
 
