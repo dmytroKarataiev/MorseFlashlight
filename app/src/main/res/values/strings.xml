@@ -15,7 +15,7 @@
     <!-- Morse code screen -->
     <string name="morse_code_textfield">Enter your message: </string>
     <string name="morse_expl">1. The length of the dot is one unit. \n2. A dash is three units. \n3. The space between parts of the same letter is one unit.
-    \n4. The space between letters is three units. \n5.The space between words is seven units.</string>
+    \n4. The space between letters is three units. \n5. The space between words is seven units.</string>
     <string name="morse_message_title">Current message:</string>
 
     <!-- Pager titles -->

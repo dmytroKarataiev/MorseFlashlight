@@ -12,6 +12,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by karataev on 2/22/16.
  */
@@ -20,10 +23,10 @@ public class MorseFragment extends android.support.v4.app.Fragment {
     private int status;
     private String morseCode, beforeChangeMorse;
 
-    private final String LOG_TAG = MorseFragment.class.getSimpleName();
-
-    public static final String ARG_OBJECT = "object";
-
+    @Bind(R.id.button_image) ImageView mButtonImage;
+    @Bind(R.id.flashlight_mode) TextView mStatusText;
+    @Bind(R.id.morse_current_text) TextView mCurrentText;
+    @Bind(R.id.edittext_morse) EditText mMorseInput;
 
     public MorseFragment() {}
 
@@ -32,14 +35,14 @@ public class MorseFragment extends android.support.v4.app.Fragment {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
-            status = savedInstanceState.getInt("status");
+            status = savedInstanceState.getInt(FlashlightService.STATUS);
 
             if (status != 0) {
                 Intent intent = new Intent(getActivity().getApplication(), FlashlightService.class);
-                intent.putExtra("status", status);
+                intent.putExtra(FlashlightService.STATUS, status);
 
                 // add morse code
-                intent.putExtra("morse", morseCode);
+                intent.putExtra(FlashlightService.MORSE, morseCode);
 
                 getActivity().getApplication().startService(intent);
             }
@@ -55,47 +58,41 @@ public class MorseFragment extends android.support.v4.app.Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_morse, container, false);
 
-        final ImageView button = (ImageView) rootView.findViewById(R.id.button_image);
-        final TextView statusText = (TextView) rootView.findViewById(R.id.flashlight_mode);
-        final TextView morseMessage = (TextView) rootView.findViewById(R.id.morse_current_text);
+        ButterKnife.bind(this, rootView);
 
         // check status and use correct image
-        setSwitchColor(statusText, button, status);
+        Utility.setSwitchColor(mStatusText, mButtonImage, status);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        mButtonImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Start service on click
-                if (status == 0) {
-                    status = 3;
+                if (status == FlashlightService.STATUS_OFF) {
+                    status = FlashlightService.STATUS_MORSE;
                 } else {
-                    status = 0;
+                    status = FlashlightService.STATUS_OFF;
                 }
 
                 // Set button drawable
-                setSwitchColor(statusText, button, status);
+                Utility.setSwitchColor(mStatusText, mButtonImage, status);
 
                 startService();
             }
         });
 
-        final EditText editText = (EditText) rootView.findViewById(R.id.edittext_morse);
-
-        editText.addTextChangedListener(new TextWatcher() {
+        mMorseInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 beforeChangeMorse = s.toString();
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
                 morseCode = s.toString();
-                morseMessage.setText(Utility.getMorseMessage(morseCode));
+                mCurrentText.setText(Utility.getMorseMessage(morseCode));
 
                 if (s.length() > 0 || beforeChangeMorse.length() > 0) {
                     startService();
@@ -121,35 +118,16 @@ public class MorseFragment extends android.support.v4.app.Fragment {
         super.onSaveInstanceState(outState);
 
         // Save status on rotate, possibly will remove rotation in the future
-        outState.putInt("status", status);
-    }
-
-    /**
-     * Method to set flashlight button drawable
-     *
-     * @param button to switch flashlight
-     * @param status flashlight mode
-     */
-    private void setSwitchColor(TextView mode, ImageView button, int status) {
-        switch (status) {
-            case 0:
-                button.setImageResource(R.drawable.switch_on);
-                mode.setText(R.string.flashlight_status_on);
-                break;
-            case 3:
-                button.setImageResource(R.drawable.switch_off);
-                mode.setText(R.string.flashlight_status_off);
-                break;
-        }
+        outState.putInt(FlashlightService.STATUS, status);
     }
 
     private void startService() {
         Intent intent = new Intent(getActivity().getApplication(), FlashlightService.class);
 
-        intent.putExtra("status", status);
+        intent.putExtra(FlashlightService.STATUS, status);
 
         // add morse code
-        intent.putExtra("morse", morseCode);
+        intent.putExtra(FlashlightService.MORSE, morseCode);
 
         getActivity().getApplication().startService(intent);
     }

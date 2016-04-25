@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.HashMap;
 
@@ -110,5 +112,29 @@ public class Utility {
         }
 
         return output.toString();
+    }
+
+    /**
+     * Method to set flashlight button drawable
+     *
+     * @param button to switch flashlight
+     * @param status flashlight mode
+     */
+    public static void setSwitchColor(TextView mode, ImageView button, int status) {
+        switch (status) {
+            case FlashlightService.STATUS_OFF:
+                button.setImageResource(R.drawable.switch_on);
+                mode.setText(R.string.flashlight_status_on);
+                break;
+            case FlashlightService.STATUS_TORCH:
+                button.setImageResource(R.drawable.switch_blink);
+                mode.setText(R.string.flashlight_status_blink);
+                break;
+            case FlashlightService.STATUS_BLINK:
+            case FlashlightService.STATUS_MORSE:
+                button.setImageResource(R.drawable.switch_off);
+                mode.setText(R.string.flashlight_status_off);
+                break;
+        }
     }
 }

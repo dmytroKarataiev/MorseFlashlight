@@ -3,9 +3,11 @@ package com.adkdevelopment.simpleflashlightadfree;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
 /**
+ * Settings Activity with inner fragment
  * Created by karataev on 1/24/16.
  */
 public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -14,8 +16,10 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Needs to be changed to the fragment implementation
-        addPreferencesFromResource(R.xml.preferences);
+        // Display the fragment as the main content.
+        getFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new ScreenOrientationFragment())
+                .commit();
 
         // Not the most elegant way to check the orientation...
         Utility.setOrientation(this);
@@ -46,4 +50,16 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         sp.unregisterOnSharedPreferenceChangeListener(this);
         super.onPause();
     }
+
+    /**
+     * This fragment shows screen orientation preferences only.
+     */
+    public static class ScreenOrientationFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.preferences);
+        }
+    }
+
 }

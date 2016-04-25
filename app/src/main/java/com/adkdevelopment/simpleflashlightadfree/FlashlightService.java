@@ -27,6 +27,14 @@ public class FlashlightService extends Service {
 
     private final String LOG_TAG = FlashlightService.class.getSimpleName();
 
+    public static final String STATUS = "status";
+    public static final String MORSE = "morse";
+
+    public static final int STATUS_OFF = 0;
+    public static final int STATUS_TORCH = 1;
+    public static final int STATUS_BLINK = 2;
+    public static final int STATUS_MORSE = 3;
+
     private int status = -1;
     private String morseCode = "";
 
@@ -41,6 +49,7 @@ public class FlashlightService extends Service {
     CameraManager manager;
     String flashCameraId;
 
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -77,7 +86,7 @@ public class FlashlightService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
 
-        status = intent.getIntExtra("status", 1);
+        status = intent.getIntExtra(STATUS, 1);
 
         //get morse code from intent
         morseCode = intent.getStringExtra("morse");

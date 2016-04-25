@@ -9,18 +9,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by karataev on 2/22/16.
  */
 public class MainFragment extends android.support.v4.app.Fragment {
 
-    private final String LOG_TAG = MainFragment.class.getSimpleName();
-
     private int status;
-    private boolean torch;
 
-    public static final String ARG_OBJECT = "object";
-
+    @Bind(R.id.button_image) ImageView mButtonImage;
+    @Bind(R.id.flashlight_mode) TextView mStatusText;
 
     public MainFragment() {}
 
@@ -29,15 +29,15 @@ public class MainFragment extends android.support.v4.app.Fragment {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
-            status = savedInstanceState.getInt("status");
+            status = savedInstanceState.getInt(FlashlightService.STATUS);
 
-            if (status != 0) {
+            if (status != FlashlightService.STATUS_OFF) {
                 Intent intent = new Intent(getActivity().getApplication(), FlashlightService.class);
-                intent.putExtra("status", status);
+                intent.putExtra(FlashlightService.STATUS, status);
                 getActivity().getApplication().startService(intent);
             }
         } else {
-            status = 0;
+            status = FlashlightService.STATUS_OFF;
         }
 
     }
@@ -48,13 +48,12 @@ public class MainFragment extends android.support.v4.app.Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        final ImageView button = (ImageView) rootView.findViewById(R.id.button_image);
-        final TextView statusText = (TextView) rootView.findViewById(R.id.flashlight_mode);
+        ButterKnife.bind(this, rootView);
 
         // check status and use correct image
-        setSwitchColor(statusText, button, status);
+        Utility.setSwitchColor(mStatusText, mButtonImage, status);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        mButtonImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Start service on click
@@ -63,9 +62,9 @@ public class MainFragment extends android.support.v4.app.Fragment {
                 Intent intent = new Intent(getActivity().getApplication(), FlashlightService.class);
 
                 // Set button drawable
-                setSwitchColor(statusText, button, status);
+                Utility.setSwitchColor(mStatusText, mButtonImage, status);
 
-                intent.putExtra("status", status);
+                intent.putExtra(FlashlightService.STATUS, status);
                 getActivity().getApplication().startService(intent);
             }
         });
@@ -85,30 +84,6 @@ public class MainFragment extends android.support.v4.app.Fragment {
         super.onSaveInstanceState(outState);
 
         // Save status on rotate, possibly will remove rotation in the future
-        outState.putInt("status", status);
+        outState.putInt(FlashlightService.STATUS, status);
     }
-
-    /**
-     * Method to set flashlight button drawable
-     *
-     * @param button to switch flashlight
-     * @param status flashlight mode
-     */
-    private void setSwitchColor(TextView mode, ImageView button, int status) {
-        switch (status) {
-            case 0:
-                button.setImageResource(R.drawable.switch_on);
-                mode.setText(R.string.flashlight_status_on);
-                break;
-            case 1:
-                button.setImageResource(R.drawable.switch_blink);
-                mode.setText(R.string.flashlight_status_blink);
-                break;
-            case 2:
-                button.setImageResource(R.drawable.switch_off);
-                mode.setText(R.string.flashlight_status_off);
-                break;
-        }
-    }
-
 }
