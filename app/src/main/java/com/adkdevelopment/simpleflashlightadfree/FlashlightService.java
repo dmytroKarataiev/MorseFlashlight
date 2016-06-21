@@ -42,7 +42,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Service to keep Flashlight Active when the app is in background
@@ -64,15 +66,72 @@ public class FlashlightService extends Service {
     private String morseCode = "";
 
     // morse variables
-    private int dot = 150;
+    public static int dot = 150;
     private int dash = 3;
     private int space = 7;
+    public static final int INCREASE = 1;
+    public static final int DECREASE = 0;
+    public static final int AMOUNT = 10;
+
+    public static int getDot() {
+        return dot;
+    }
+
+    public static void changeDot(int status) {
+        if (status == INCREASE) {
+            dot += AMOUNT;
+        } else if (dot > AMOUNT) {
+            dot -= AMOUNT;
+        }
+    }
 
     private Camera camera;
     private Camera.Parameters parameters;
-    FlashlightSwitch flashlightSwitch;
-    CameraManager manager;
-    String flashCameraId;
+    private FlashlightSwitch flashlightSwitch;
+    private CameraManager manager;
+    private String flashCameraId;
+
+    public static final Map<String, int[]> sMorseDict;
+    static {
+        Map<String, int[]> morseCodesMap = new HashMap<>();
+        morseCodesMap.put("A", new int[]{1, 3, 0, 0, 0});
+        morseCodesMap.put("B", new int[]{3, 1, 1, 1, 0});
+        morseCodesMap.put("C", new int[]{3, 1, 3, 1, 0});
+        morseCodesMap.put("D", new int[]{3, 1, 1, 0, 0});
+        morseCodesMap.put("E", new int[]{1, 0, 0, 0, 0});
+        morseCodesMap.put("F", new int[]{1, 1, 3, 1, 0});
+        morseCodesMap.put("G", new int[]{3, 3, 1, 0, 0});
+        morseCodesMap.put("H", new int[]{1, 1, 1, 1, 0});
+        morseCodesMap.put("I", new int[]{1, 1, 0, 0, 0});
+        morseCodesMap.put("J", new int[]{1, 3, 3, 3, 0});
+        morseCodesMap.put("K", new int[]{3, 1, 3, 0, 0});
+        morseCodesMap.put("L", new int[]{1, 3, 1, 1, 0});
+        morseCodesMap.put("M", new int[]{3, 3, 0, 0, 0});
+        morseCodesMap.put("N", new int[]{3, 1, 0, 0, 0});
+        morseCodesMap.put("O", new int[]{3, 3, 3, 0, 0});
+        morseCodesMap.put("P", new int[]{1, 3, 3, 1, 0});
+        morseCodesMap.put("Q", new int[]{3, 3, 1, 3, 0});
+        morseCodesMap.put("R", new int[]{1, 3, 1, 0, 0});
+        morseCodesMap.put("S", new int[]{1, 1, 1, 0, 0});
+        morseCodesMap.put("T", new int[]{3, 0, 0, 0, 0});
+        morseCodesMap.put("U", new int[]{1, 1, 3, 0, 0});
+        morseCodesMap.put("V", new int[]{1, 1, 1, 3, 0});
+        morseCodesMap.put("W", new int[]{1, 3, 3, 0, 0});
+        morseCodesMap.put("X", new int[]{3, 1, 1, 3, 0});
+        morseCodesMap.put("Y", new int[]{3, 1, 3, 3, 0});
+        morseCodesMap.put("Z", new int[]{3, 3, 1, 1, 0});
+        morseCodesMap.put("1", new int[]{1, 3, 3, 3, 3});
+        morseCodesMap.put("2", new int[]{1, 1, 3, 3, 3});
+        morseCodesMap.put("3", new int[]{1, 1, 1, 3, 3});
+        morseCodesMap.put("4", new int[]{1, 1, 1, 1, 3});
+        morseCodesMap.put("5", new int[]{1, 1, 1, 1, 1});
+        morseCodesMap.put("6", new int[]{3, 1, 1, 1, 1});
+        morseCodesMap.put("7", new int[]{3, 3, 1, 1, 1});
+        morseCodesMap.put("8", new int[]{3, 3, 3, 1, 1});
+        morseCodesMap.put("9", new int[]{3, 3, 3, 3, 1});
+        morseCodesMap.put("0", new int[]{3, 3, 3, 3, 3});
+        sMorseDict = Collections.unmodifiableMap(morseCodesMap);
+    }
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
@@ -132,49 +191,7 @@ public class FlashlightService extends Service {
 
     public class FlashlightSwitch extends AsyncTask<Integer, Void, Void> {
 
-        HashMap<String, int[]> morseCodesMap;
-
         public FlashlightSwitch() {
-
-            // Morse HashMap to retrieve sequences in O(1)
-
-            morseCodesMap = new HashMap<>();
-            morseCodesMap.put("A", new int[]{1, 3, 0, 0, 0});
-            morseCodesMap.put("B", new int[]{3, 1, 1, 1, 0});
-            morseCodesMap.put("C", new int[]{3, 1, 3, 1, 0});
-            morseCodesMap.put("D", new int[]{3, 1, 1, 0, 0});
-            morseCodesMap.put("E", new int[]{1, 0, 0, 0, 0});
-            morseCodesMap.put("F", new int[]{1, 1, 3, 1, 0});
-            morseCodesMap.put("G", new int[]{3, 3, 1, 0, 0});
-            morseCodesMap.put("H", new int[]{1, 1, 1, 1, 0});
-            morseCodesMap.put("I", new int[]{1, 1, 0, 0, 0});
-            morseCodesMap.put("J", new int[]{1, 3, 3, 3, 0});
-            morseCodesMap.put("K", new int[]{3, 1, 3, 0, 0});
-            morseCodesMap.put("L", new int[]{1, 3, 1, 1, 0});
-            morseCodesMap.put("M", new int[]{3, 3, 0, 0, 0});
-            morseCodesMap.put("N", new int[]{3, 1, 0, 0, 0});
-            morseCodesMap.put("O", new int[]{3, 3, 3, 0, 0});
-            morseCodesMap.put("P", new int[]{1, 3, 3, 1, 0});
-            morseCodesMap.put("Q", new int[]{3, 3, 1, 3, 0});
-            morseCodesMap.put("R", new int[]{1, 3, 1, 0, 0});
-            morseCodesMap.put("S", new int[]{1, 1, 1, 0, 0});
-            morseCodesMap.put("T", new int[]{3, 0, 0, 0, 0});
-            morseCodesMap.put("U", new int[]{1, 1, 3, 0, 0});
-            morseCodesMap.put("V", new int[]{1, 1, 1, 3, 0});
-            morseCodesMap.put("W", new int[]{1, 3, 3, 0, 0});
-            morseCodesMap.put("X", new int[]{3, 1, 1, 3, 0});
-            morseCodesMap.put("Y", new int[]{3, 1, 3, 3, 0});
-            morseCodesMap.put("Z", new int[]{3, 3, 1, 1, 0});
-            morseCodesMap.put("1", new int[]{1, 3, 3, 3, 3});
-            morseCodesMap.put("2", new int[]{1, 1, 3, 3, 3});
-            morseCodesMap.put("3", new int[]{1, 1, 1, 3, 3});
-            morseCodesMap.put("4", new int[]{1, 1, 1, 1, 3});
-            morseCodesMap.put("5", new int[]{1, 1, 1, 1, 1});
-            morseCodesMap.put("6", new int[]{3, 1, 1, 1, 1});
-            morseCodesMap.put("7", new int[]{3, 3, 1, 1, 1});
-            morseCodesMap.put("8", new int[]{3, 3, 3, 1, 1});
-            morseCodesMap.put("9", new int[]{3, 3, 3, 3, 1});
-            morseCodesMap.put("0", new int[]{3, 3, 3, 3, 3});
         }
 
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -186,9 +203,8 @@ public class FlashlightService extends Service {
                 flashCameraId = "0";
                 try {
                     for (String camera : manager.getCameraIdList()) {
-                        if (manager
-                                .getCameraCharacteristics(camera)
-                                .get(CameraCharacteristics.FLASH_INFO_AVAILABLE)) {
+                        if (manager.getCameraCharacteristics(camera)
+                                .get(CameraCharacteristics.FLASH_INFO_AVAILABLE) != null) {
                             flashCameraId = camera;
                         }
                     }
@@ -209,6 +225,7 @@ public class FlashlightService extends Service {
 
                             // Blinking will stop on service re-start.
                             try {
+                                //noinspection InfiniteLoopStatement
                                 while (true) {
                                     Thread.sleep(dot);
                                     manager.setTorchMode(flashCameraId, true);
@@ -352,18 +369,13 @@ public class FlashlightService extends Service {
          */
         private int[] getMorseSequence(String character) {
 
-            int[] sequence = morseCodesMap.get(character);
+            int[] sequence = sMorseDict.get(character);
 
             if (sequence == null) {
                 return new int[]{0, 0, 0, 0, 0};
             } else {
                 return sequence;
             }
-
         }
-
-
     }
-
-
 }

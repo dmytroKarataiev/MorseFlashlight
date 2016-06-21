@@ -53,6 +53,9 @@ public class MorseFragment extends android.support.v4.app.Fragment {
     @BindView(R.id.flashlight_mode) TextView mStatusText;
     @BindView(R.id.morse_current_text) TextView mCurrentText;
     @BindView(R.id.edittext_morse) EditText mMorseInput;
+    @BindView(R.id.button_increase) ImageView mImageIncrease;
+    @BindView(R.id.button_decrease) ImageView mImageDecrease;
+    @BindView(R.id.morse_speed) TextView mTextSpeed;
     private Unbinder mUnbinder;
 
     public MorseFragment() {}
@@ -127,6 +130,10 @@ public class MorseFragment extends android.support.v4.app.Fragment {
             }
         });
 
+        mImageIncrease.setOnClickListener(mSpeedListener);
+        mImageDecrease.setOnClickListener(mSpeedListener);
+        mTextSpeed.setText(getString(R.string.morse_speed, FlashlightService.getDot()));
+
         return rootView;
     }
 
@@ -162,5 +169,18 @@ public class MorseFragment extends android.support.v4.app.Fragment {
 
         getActivity().getApplication().startService(intent);
     }
+
+    View.OnClickListener mSpeedListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (view.getId() == mImageIncrease.getId()) {
+                FlashlightService.changeDot(FlashlightService.INCREASE);
+            } else {
+                FlashlightService.changeDot(FlashlightService.DECREASE);
+            }
+            mTextSpeed.setText(getString(R.string.morse_speed, FlashlightService.getDot()));
+            startService();
+        }
+    };
 
 }

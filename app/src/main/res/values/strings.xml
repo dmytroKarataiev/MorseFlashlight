@@ -23,7 +23,7 @@
   ~
   -->
 
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/tools">
     <string name="app_name">Simple Flashlight</string>
     <string name="flashlight_switch">Toggle</string>
     <string name="flashlight_status_on">Turn on</string>
@@ -42,10 +42,13 @@
     <string name="morse_expl">1. The length of the dot is one unit. \n2. A dash is three units. \n3. The space between parts of the same letter is one unit.
     \n4. The space between letters is three units. \n5. The space between words is seven units.</string>
     <string name="morse_message_title">Current message:</string>
+    <string name="morse_speed">Speed: <xliff:g id="speed">%1$d</xliff:g></string>
 
     <!-- Pager titles -->
     <string name="morse_screen">Morse code</string>
     <string name="flashlight_screen">Flashlight</string>
     <string name="emergency_screen">Emergency signal</string>
+    <string name="speed_increase">Increase speed</string>
+    <string name="speed_decrease">Speed decrease</string>
 
 </resources>

@@ -10,9 +10,9 @@ Flashlight with Morse Code and no Ads which works as a Service (it works when th
 * Morse Code [(03acde1) commit.](https://github.com/dmytroKarataiev/SimpleFlashlight/commit/03acde1851b01802823e2d7e044bdaf1f1a31297)
 * Full Marshmallow support (Camera2 API, CameraManager).
 * Emergency state with a SEWS signal and a flashing background.
+* Morse Code speed adjuster.
 
 ## Future development
-* Morse Code speed.
 * Sending an SMS of a location to most important people.
 
 ## Used technologies
