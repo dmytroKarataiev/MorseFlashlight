@@ -1,3 +1,28 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2016. Dmytro Karataiev
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 package com.adkdevelopment.simpleflashlightadfree;
 
 import android.app.Activity;
@@ -23,7 +48,6 @@ public class Utility {
     public static boolean getOrientationStatus(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(context.getString(R.string.pref_orientation_key), true);
-
     }
 
     /**
@@ -123,16 +147,16 @@ public class Utility {
     public static void setSwitchColor(TextView mode, ImageView button, int status) {
         switch (status) {
             case FlashlightService.STATUS_OFF:
-                button.setImageResource(R.drawable.switch_on);
+                button.setImageResource(R.drawable.ic_switch_on);
                 mode.setText(R.string.flashlight_status_on);
                 break;
             case FlashlightService.STATUS_TORCH:
-                button.setImageResource(R.drawable.switch_blink);
+                button.setImageResource(R.drawable.ic_switch_blink);
                 mode.setText(R.string.flashlight_status_blink);
                 break;
             case FlashlightService.STATUS_BLINK:
             case FlashlightService.STATUS_MORSE:
-                button.setImageResource(R.drawable.switch_off);
+                button.setImageResource(R.drawable.ic_switch_off);
                 mode.setText(R.string.flashlight_status_off);
                 break;
         }

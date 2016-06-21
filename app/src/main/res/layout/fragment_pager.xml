@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ MIT License
   ~
@@ -23,13 +24,21 @@
   ~
   -->
 
-<resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="button_text">46sp</dimen>
-    <dimen name="button_text_small">24sp</dimen>
-    <dimen name="padding_small">4dp</dimen>
-    <dimen name="padding_default">16dp</dimen>
-    <dimen name="button_size">100dp</dimen>
-</resources>
+<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pager"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.view.PagerTitleStrip
+        android:id="@+id/pager_title_strip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        android:paddingBottom="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_small"
+        android:paddingLeft="@dimen/padding_default"
+        android:paddingRight="@dimen/padding_default"/>
+
+</android.support.v4.view.ViewPager>

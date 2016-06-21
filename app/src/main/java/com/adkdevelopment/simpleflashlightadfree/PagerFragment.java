@@ -1,3 +1,28 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2016. Dmytro Karataiev
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 package com.adkdevelopment.simpleflashlightadfree;
 
 import android.os.Bundle;
@@ -10,34 +35,39 @@ import android.view.ViewGroup;
 
 import com.adkdevelopment.simpleflashlightadfree.adapters.PagerAdapter;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Created by karataev on 2/22/16.
  */
 public class PagerFragment extends Fragment {
 
-    // When requested, this adapter returns a DemoObjectFragment,
-    // representing an object in the collection.
-    PagerAdapter mPagerAdapter;
-    @Bind(R.id.pager) ViewPager mViewPager;
+    @BindView(R.id.pager) ViewPager mViewPager;
+    private Unbinder mUnbinder;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.pager_fragment, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_pager, container, false);
 
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         // ViewPager and its adapters use support library
         // fragments, so use getSupportFragmentManager.
-        mPagerAdapter = new PagerAdapter(this, getChildFragmentManager());
+        PagerAdapter mPagerAdapter = new PagerAdapter(this, getChildFragmentManager());
 
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setCurrentItem(MainActivity.current_fragment);
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 }

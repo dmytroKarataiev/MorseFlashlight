@@ -1,3 +1,28 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2016. Dmytro Karataiev
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 package com.adkdevelopment.simpleflashlightadfree;
 
 import android.content.Intent;
@@ -8,9 +33,10 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String LOG_TAG = MainActivity.class.getSimpleName();
+    public static final String PAGER = "Pager_Current";
+    public static final String MAIN_FRAG = "my_main";
     public static int current_fragment = 1;
-    PagerFragment pagerFragment;
+    private PagerFragment pagerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,15 +85,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt("Pager_Current", pagerFragment.mViewPager.getCurrentItem());
-        getSupportFragmentManager().putFragment(outState, "my_main", pagerFragment);
+        outState.putInt(PAGER, pagerFragment.mViewPager.getCurrentItem());
+        getSupportFragmentManager().putFragment(outState, MAIN_FRAG, pagerFragment);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        current_fragment = savedInstanceState.getInt("Pager_Current");
-        pagerFragment = (PagerFragment) getSupportFragmentManager().getFragment(savedInstanceState,"my_main");
+        current_fragment = savedInstanceState.getInt(PAGER);
+        pagerFragment = (PagerFragment) getSupportFragmentManager()
+                .getFragment(savedInstanceState, MAIN_FRAG);
         super.onRestoreInstanceState(savedInstanceState);
     }
 
