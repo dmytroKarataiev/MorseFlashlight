@@ -203,8 +203,10 @@ public class FlashlightService extends Service {
                 flashCameraId = "0";
                 try {
                     for (String camera : manager.getCameraIdList()) {
-                        if (manager.getCameraCharacteristics(camera)
-                                .get(CameraCharacteristics.FLASH_INFO_AVAILABLE) != null) {
+                        CameraCharacteristics ch = manager.getCameraCharacteristics(camera);
+                        //noinspection ConstantConditions
+                        if (ch.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) != null &&
+                                ch.get(CameraCharacteristics.FLASH_INFO_AVAILABLE)) {
                             flashCameraId = camera;
                         }
                     }
