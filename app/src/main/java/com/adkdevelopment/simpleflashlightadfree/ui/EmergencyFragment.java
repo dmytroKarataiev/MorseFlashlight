@@ -23,19 +23,28 @@
  *
  */
 
-package com.adkdevelopment.simpleflashlightadfree;
+package com.adkdevelopment.simpleflashlightadfree.ui;
 
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.adkdevelopment.simpleflashlightadfree.service.FlashlightService;
+import com.adkdevelopment.simpleflashlightadfree.R;
+import com.adkdevelopment.simpleflashlightadfree.utils.Utility;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,21 +53,19 @@ import butterknife.Unbinder;
 /**
  * Created by karataev on 2/22/16.
  */
-public class MorseFragment extends android.support.v4.app.Fragment {
+public class EmergencyFragment extends android.support.v4.app.Fragment {
+
+    private static final String TAG = EmergencyFragment.class.getSimpleName();
 
     private int status;
-    private String morseCode, beforeChangeMorse;
+    MediaPlayer mMediaPlayer;
 
     @BindView(R.id.button_image) ImageView mButtonImage;
     @BindView(R.id.flashlight_mode) TextView mStatusText;
-    @BindView(R.id.morse_current_text) TextView mCurrentText;
-    @BindView(R.id.edittext_morse) EditText mMorseInput;
-    @BindView(R.id.button_increase) ImageView mImageIncrease;
-    @BindView(R.id.button_decrease) ImageView mImageDecrease;
-    @BindView(R.id.morse_speed) TextView mTextSpeed;
+    @BindView(R.id.layout) LinearLayout mLinearLayout;
     private Unbinder mUnbinder;
 
-    public MorseFragment() {}
+    public EmergencyFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,17 +74,13 @@ public class MorseFragment extends android.support.v4.app.Fragment {
         if (savedInstanceState != null) {
             status = savedInstanceState.getInt(FlashlightService.STATUS);
 
-            if (status != 0) {
+            if (status != FlashlightService.STATUS_OFF) {
                 Intent intent = new Intent(getActivity().getApplication(), FlashlightService.class);
                 intent.putExtra(FlashlightService.STATUS, status);
-
-                // add morse code
-                intent.putExtra(FlashlightService.MORSE, morseCode);
-
                 getActivity().getApplication().startService(intent);
             }
         } else {
-            status = 0;
+            status = FlashlightService.STATUS_OFF;
         }
 
     }
@@ -86,7 +89,7 @@ public class MorseFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_morse, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         mUnbinder = ButterKnife.bind(this, rootView);
 
@@ -98,51 +101,24 @@ public class MorseFragment extends android.support.v4.app.Fragment {
             public void onClick(View v) {
                 // Start service on click
                 if (status == FlashlightService.STATUS_OFF) {
-                    status = FlashlightService.STATUS_MORSE;
+                    status = FlashlightService.STATUS_BLINK;
                 } else {
                     status = FlashlightService.STATUS_OFF;
                 }
 
+                emergencySignal();
+
+                Intent intent = new Intent(getActivity().getApplication(), FlashlightService.class);
+
                 // Set button drawable
                 Utility.setSwitchColor(mStatusText, mButtonImage, status);
 
-                startService();
+                intent.putExtra(FlashlightService.STATUS, status);
+                getActivity().getApplication().startService(intent);
             }
         });
-
-        mMorseInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                beforeChangeMorse = s.toString();
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                morseCode = s.toString();
-                mCurrentText.setText(Utility.getMorseMessage(morseCode));
-
-                if (s.length() > 0 || beforeChangeMorse.length() > 0) {
-                    startService();
-                }
-            }
-        });
-
-        mImageIncrease.setOnClickListener(mSpeedListener);
-        mImageDecrease.setOnClickListener(mSpeedListener);
-        mTextSpeed.setText(getString(R.string.morse_speed, FlashlightService.getDot()));
 
         return rootView;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        // Stop service on application exit
-        Intent intent = new Intent(getActivity().getApplication(), FlashlightService.class);
-        getActivity().getApplication().stopService(intent);
     }
 
     @Override
@@ -154,33 +130,52 @@ public class MorseFragment extends android.support.v4.app.Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
         // Save status on rotate, possibly will remove rotation in the future
         outState.putInt(FlashlightService.STATUS, status);
     }
 
-    private void startService() {
-        Intent intent = new Intent(getActivity().getApplication(), FlashlightService.class);
+    /**
+     * Starts emergency sound from assets
+     */
+    public void emergencySignal() {
 
-        intent.putExtra(FlashlightService.STATUS, status);
+        try {
+            if (mMediaPlayer != null && mMediaPlayer.isPlaying() && status == FlashlightService.STATUS_OFF) {
+                mMediaPlayer.stop();
+                mMediaPlayer.reset();
+                mMediaPlayer.release();
+                mMediaPlayer = null;
 
-        // add morse code
-        intent.putExtra(FlashlightService.MORSE, morseCode);
+                mLinearLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorBackground));
+            } else if (status == FlashlightService.STATUS_BLINK) {
 
-        getActivity().getApplication().startService(intent);
-    }
+                final AnimationDrawable drawable = new AnimationDrawable();
+                final Handler handler = new Handler();
 
-    View.OnClickListener mSpeedListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (view.getId() == mImageIncrease.getId()) {
-                FlashlightService.changeDot(FlashlightService.INCREASE);
-            } else {
-                FlashlightService.changeDot(FlashlightService.DECREASE);
+                drawable.addFrame(new ColorDrawable(Color.RED), 400);
+                drawable.addFrame(new ColorDrawable(Color.BLUE), 400);
+                drawable.setOneShot(false);
+
+                mLinearLayout.setBackground(drawable);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        drawable.start();
+                    }
+                }, 100);
+
+                mMediaPlayer = new MediaPlayer();
+                AssetFileDescriptor descriptor = getActivity().getAssets().openFd("sews.mp3");
+                mMediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
+                descriptor.close();
+
+                mMediaPlayer.prepare();
+                mMediaPlayer.setVolume(1f, 1f);
+                mMediaPlayer.setLooping(true);
+                mMediaPlayer.start();
             }
-            mTextSpeed.setText(getString(R.string.morse_speed, FlashlightService.getDot()));
-            startService();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    };
-
+    }
 }

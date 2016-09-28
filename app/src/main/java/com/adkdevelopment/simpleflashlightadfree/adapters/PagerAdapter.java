@@ -29,10 +29,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.adkdevelopment.simpleflashlightadfree.EmergencyFragment;
-import com.adkdevelopment.simpleflashlightadfree.MainFragment;
-import com.adkdevelopment.simpleflashlightadfree.MorseFragment;
-import com.adkdevelopment.simpleflashlightadfree.PagerFragment;
+import com.adkdevelopment.simpleflashlightadfree.ui.EmergencyFragment;
+import com.adkdevelopment.simpleflashlightadfree.ui.MainFragment;
+import com.adkdevelopment.simpleflashlightadfree.ui.MorseFragment;
+import com.adkdevelopment.simpleflashlightadfree.ui.PagerFragment;
 import com.adkdevelopment.simpleflashlightadfree.R;
 
 /**
@@ -42,7 +42,7 @@ import com.adkdevelopment.simpleflashlightadfree.R;
  */
 public class PagerAdapter extends FragmentStatePagerAdapter {
 
-    private PagerFragment pagerFragment;
+    private final PagerFragment pagerFragment;
 
     public PagerAdapter(PagerFragment pagerFragment, FragmentManager fm) {
         super(fm);

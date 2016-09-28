@@ -23,7 +23,7 @@
  *
  */
 
-package com.adkdevelopment.simpleflashlightadfree;
+package com.adkdevelopment.simpleflashlightadfree.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -32,6 +32,9 @@ import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.adkdevelopment.simpleflashlightadfree.R;
+import com.adkdevelopment.simpleflashlightadfree.service.FlashlightService;
 
 /**
  * Created by karataev on 1/24/16.

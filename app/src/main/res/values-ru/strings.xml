@@ -39,5 +39,8 @@
     <string name="morse_screen">Морзе Код</string>
     <string name="morse_message_title">Текущее сообщение:</string>
     <string name="morse_expl">1. Длина точки - 1 юнит. \n2. Тире - 3 юнита. \n3. Пробел между частями одной буквы - 1 юнит. \n4. Пробел между буквами - 3 юнита. \n5. Пробел между словами - 7 юнитов.</string>
+    <string name="speed_decrease">Снизить скорость</string>
+    <string name="speed_increase">Повысить скорость</string>
+    <string name="morse_speed">Скорость мерцания</string>
 
 </resources>

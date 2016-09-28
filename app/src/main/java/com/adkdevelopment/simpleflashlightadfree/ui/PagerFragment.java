@@ -23,7 +23,7 @@
  *
  */
 
-package com.adkdevelopment.simpleflashlightadfree;
+package com.adkdevelopment.simpleflashlightadfree.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -33,6 +33,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.adkdevelopment.simpleflashlightadfree.R;
 import com.adkdevelopment.simpleflashlightadfree.adapters.PagerAdapter;
 
 import butterknife.BindView;

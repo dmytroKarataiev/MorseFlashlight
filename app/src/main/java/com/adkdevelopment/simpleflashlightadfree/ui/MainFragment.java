@@ -23,7 +23,7 @@
  *
  */
 
-package com.adkdevelopment.simpleflashlightadfree;
+package com.adkdevelopment.simpleflashlightadfree.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,6 +33,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.adkdevelopment.simpleflashlightadfree.service.FlashlightService;
+import com.adkdevelopment.simpleflashlightadfree.R;
+import com.adkdevelopment.simpleflashlightadfree.utils.Utility;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

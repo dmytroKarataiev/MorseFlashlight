@@ -23,13 +23,16 @@
  *
  */
 
-package com.adkdevelopment.simpleflashlightadfree;
+package com.adkdevelopment.simpleflashlightadfree.settings;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+
+import com.adkdevelopment.simpleflashlightadfree.R;
+import com.adkdevelopment.simpleflashlightadfree.utils.Utility;
 
 /**
  * Settings Activity with inner fragment

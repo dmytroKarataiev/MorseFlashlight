@@ -23,7 +23,7 @@
  *
  */
 
-package com.adkdevelopment.simpleflashlightadfree;
+package com.adkdevelopment.simpleflashlightadfree.service;
 
 import android.annotation.TargetApi;
 import android.app.Service;
@@ -67,8 +67,8 @@ public class FlashlightService extends Service {
 
     // morse variables
     public static int dot = 150;
-    private int dash = 3;
-    private int space = 7;
+    private final int dash = 3;
+    private final int space = 7;
     public static final int INCREASE = 1;
     public static final int DECREASE = 0;
     public static final int AMOUNT = 10;
@@ -92,6 +92,7 @@ public class FlashlightService extends Service {
     private String flashCameraId;
 
     public static final Map<String, int[]> sMorseDict;
+
     static {
         Map<String, int[]> morseCodesMap = new HashMap<>();
         morseCodesMap.put("A", new int[]{1, 3, 0, 0, 0});
@@ -156,8 +157,6 @@ public class FlashlightService extends Service {
                 Log.e(LOG_TAG, "Error: " + e);
             }
         }
-
-
     }
 
     @Nullable
@@ -186,7 +185,7 @@ public class FlashlightService extends Service {
         flashlightSwitch = new FlashlightSwitch();
         flashlightSwitch.execute(status);
 
-        return 0;
+        return START_NOT_STICKY;
     }
 
     public class FlashlightSwitch extends AsyncTask<Integer, Void, Void> {
