@@ -23,29 +23,22 @@
  *
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+package com.adkdevelopment.simpleflashlightadfree;
 
-buildscript {
-    repositories {
-        jcenter()
-        maven { url 'https://maven.fabric.io/public' }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-        classpath 'io.fabric.tools:gradle:1.22.0'
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
+import android.app.Application;
 
-allprojects {
-    repositories {
-        jcenter()
-        maven { url 'https://maven.fabric.io/public' }
-    }
-}
+import com.crashlytics.android.Crashlytics;
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+import io.fabric.sdk.android.Fabric;
+
+/**
+ * Created by Dmytro Karataiev on 10/27/16.
+ */
+
+public class App extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Fabric.with(this, new Crashlytics());
+    }
 }

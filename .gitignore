@@ -52,4 +52,6 @@ captures/
 *.idea
 *.iml
 out/
-.idea/
+
+# API keys
+fabric.properties
