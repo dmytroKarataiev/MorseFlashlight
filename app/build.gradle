@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'io.fabric.tools:gradle:1.22.1'
     }
 }
 /*
@@ -38,7 +38,7 @@ apply plugin: 'android-apt'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "24.0.3"
+    buildToolsVersion '25.0.2'
 
     defaultConfig {
         applicationId "com.adkdevelopment.simpleflashlightadfree"
@@ -56,14 +56,17 @@ android {
 }
 
 ext {
-    supportVersion = '25.0.1'
-    butterknifeVersion = "8.4.0"
+    supportVersion = '25.2.0'
+    butterknifeVersion = "8.5.1"
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':license-release')
+
     testCompile 'junit:junit:4.12'
     compile "com.android.support:appcompat-v7:$supportVersion"
+    compile "com.android.support:design:$supportVersion"
 
     // life simplifiers
     compile "com.jakewharton:butterknife:$butterknifeVersion"

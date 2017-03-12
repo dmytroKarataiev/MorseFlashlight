@@ -34,4 +34,10 @@
         android:title="@string/preferences"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_license"
+        android:orderInCategory="200"
+        android:title="@string/title_activity_license"
+        app:showAsAction="never" />
+
 </menu>
