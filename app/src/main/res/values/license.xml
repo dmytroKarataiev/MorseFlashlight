@@ -26,7 +26,7 @@
 
 <resources>
 
-    <string name="license">
+    <string name="license" translatable="false">
         <![CDATA[
             <body><h2>Privacy Policy</h2>
             <p> Dmytro Karataiev built the Morse Flashlight app as an Open Source app. This SERVICE is provided by Dmytro Karataiev
